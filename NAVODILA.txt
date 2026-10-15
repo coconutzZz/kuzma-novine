@@ -66,9 +66,14 @@ ENOLIČNI ID-JI
   namenjeno dokumentom, ki jih urednik izrecno označi za lekturo.
 
 NOV ČLANEK IN POZNEJŠE DOPOLNITVE
-- Prvo sporočilo z dokumentom, ki nima znakov povezave z obstoječim člankom,
-  ustvari novo mapo in vrstico s stanjem Prejeto.
-- Če najde možne povezave ali prejme samo slike, sporočilo in priponke najprej
+- Nov članek se sprejme samo, če sporočilo vsebuje priponko .doc ali .docx.
+  Če ni znakov povezave z obstoječim člankom, ustvari novo mapo in vrstico
+  s stanjem Prejeto. Končnice se preverjajo neodvisno od velikosti črk.
+- Samostojni PDF, .docm, slike in druge priponke ne ustvarijo novega članka.
+  Mail s slikami brez prepoznane povezave se vseeno shrani v začasno mapo in
+  doda v Neujemajoči maili. Predlog članka ostane prazen, urednik ga izbere ročno.
+  Nepovezana sporočila brez .doc/.docx, slik in znakov dopolnitve se preskočijo.
+- Če najde možne povezave ali besedilo nakazuje dopolnitev, sporočilo in priponke najprej
   shrani v začasno mapo ter doda vrstico v Neujemajoči maili.
 - Pri predlogih primerja e-naslov, zadevo, naslov članka, besede v telesu
   sporočila, znano organizacijo in Gmailov pogovor. Predlog vsebuje razloge.
@@ -83,7 +88,9 @@ NOV ČLANEK IN POZNEJŠE DOPOLNITVE
 UREDNIŠKO POTRJEVANJE
 1. Odprite Neujemajoči maili in preglejte pošiljatelja, predogled ter predloge.
 2. V stolpcu Izbrani članek izberite pravi članek iz spustnega seznama.
-   Če gre za nov prispevek znanega avtorja, izberite [NOVO] Ustvari nov članek.
+   Če gre za nov prispevek znanega avtorja s priponko .doc ali .docx, izberite
+   [NOVO] Ustvari nov članek. Ta možnost brez Wordove priponke ni dovoljena.
+   Ločeno poslane slike ali PDF povežite z obstoječim člankom.
 3. Za običajne slike ali popravke pustite Vrsta gradiva = Dopolnitev.
    Če ročno povezujete lektorjev odgovor z neustrezno zadevo ali imenom,
    lahko izrecno izberete Lekturirana različica.
@@ -140,8 +147,11 @@ NAPAKE PRI POŠILJANJU
   izberite pripravljeno za lekturo v glavni evidenci.
 
 OMEJITVE IN UPORABA
-- Obravnava se pošta s podprtimi priponkami. Odgovor brez priponke ne pomeni
-  vrnjene lekture. Fotografije, Word in PDF se shranijo brez pretvorbe.
+- Za sprejem novega članka sta dovoljeni samo končnici .doc in .docx.
+  Če takšno sporočilo vsebuje tudi fotografije ali PDF, se shranijo v isto mapo.
+  Fotografije, PDF in drugi podprti dokumenti se še naprej sprejemajo kot
+  dopolnitve obstoječih člankov oziroma kot odgovori v lektorskem postopku.
+  Odgovor brez priponke ne pomeni vrnjene lekture. Datoteke se ne pretvarjajo.
 - ZIP priponk ne razširja. Slik z zunanjih spletnih naslovov ne prenaša.
 - Vključene so tudi vdelane slike, zato se lahko shranijo podpisi in logotipi.
   Za izključitev nastavite INCLUDE_INLINE_IMAGES na false.
@@ -163,6 +173,13 @@ OMEJITVE IN UPORABA
   ustavi oba sprožilca; setup ju ponovno vključi. E-pošte in člankov ne briše.
 - Skript je preverjen s simuliranimi Googlovimi storitvami. Namestitev in
   preizkus v dejanskem Google računu mora uporabnik še opraviti.
+
+LOKALNI PREIZKUSI V REPOZITORIJU
+- Potrebujete Node.js 18 ali novejši. Dodatnih knjižnic ni treba nameščati.
+- V korenu repozitorija zaženite npm test.
+- Preizkusi v tests/automation.test.cjs preverijo omejitev .doc/.docx, ločene
+  dopolnitve, potrjevanje, ponavljanje po prekinitvi, ID-je in potek lekture.
+- Googlove storitve in pošiljanje so simulirani; dejanska pošta se ne pošilja.
 
 GOOGLOVA DOKUMENTACIJA
 https://developers.google.com/apps-script/guides/triggers/installable

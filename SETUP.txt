@@ -1,104 +1,40 @@
-Naše novine 2026 - Gmail submission automation
+NAŠE NOVINE 2026 – HITRA NAMESTITEV
 
-INSTALL
-1. Sign in to the Gmail account that receives the articles.
-2. Open https://script.google.com/ and create a New project.
-3. Replace the contents of Code.gs with the supplied Code.gs.
-4. Open Project Settings (gear icon). Enable "Show appsscript.json manifest
-   file in editor". Return to Editor and replace appsscript.json with the
-   supplied appsscript.json. Save both files.
-   The manifest enables the Gmail advanced service and requests read-only
-   Gmail access. For a default Apps Script Cloud project, the Gmail API is
-   enabled automatically. A custom/standard Cloud project needs the Gmail
-   API enabled separately in Google Cloud Console.
-5. Optional: adjust CONFIG at the top of Code.gs before the first setup.
-6. Select setup in the function dropdown and click Run. Complete Google's
-   authorization prompts using the mailbox that receives the submissions.
-7. The execution log displays the main Drive folder and register links.
-   A timer now checks incoming messages approximately every five minutes.
-   The computer and browser do not need to stay open.
-8. Send a test submission FROM ANOTHER EMAIL ACCOUNT, with the article title
-   as its subject and a photo, PDF, or Word file attached. Wait for the next
-   check, or run processSubmissions after at least 60 seconds. Verify its
-   article folder and the Received row in the register.
+Celotna navodila so v NAVODILA.txt. Navodila za lektorja so ločeno v
+NAVODILA_ZA_LEKTORJA.txt.
 
-FOLDER STRUCTURE
-Naše novine 2026/
-  Article title from email subject/
-    001_photo.jpg
-    002_article.docx
-    003_document.pdf
+NOVA NAMESTITEV
+1. Prijavite se v Gmail račun uredništva in odprite https://script.google.com/.
+2. Ustvarite nov projekt in vsebino Code.gs zamenjajte s kodo iz repozitorija.
+3. V nastavitvah projekta vključite prikaz appsscript.json in vanjo prekopirajte
+   priloženi manifest. Shranite obe datoteki.
+4. Po potrebi nastavite glavno mapo, obstoječo evidenco ali začetni datum v CONFIG.
+5. Zaženite setup in odobrite potrebna Googlova dovoljenja.
+6. V dnevniku izvajanja odprite povezavi do glavne mape in evidence.
+7. Preizkusite prejem novega članka s priponko .doc ali .docx, nato še ločene
+   fotografije in postopek lekture. Nova pošta mora biti stara vsaj eno minuto.
 
-DEFAULT BEHAVIOR
-- The email subject becomes the article's folder name. Unicode letters,
-  including š, č, ć and ž, are preserved. Slashes/control characters are
-  replaced with spaces and very long folder names are shortened.
-- Every incoming email containing supported attachments is one submission.
-  Multiple attachments in an email share one folder and one register row.
-  Separate emails with the same subject get separate folders; the later
-  folder has a Gmail message ID suffix. Replies are separate submissions.
-- The root folder is named Naše novine 2026. setup reuses one existing
-  root-level folder with that exact name, or creates it if absent. Set
-  MAIN_FOLDER_ID to use a specific existing My Drive folder elsewhere.
-- The register is a separate Google Sheets file named
-  Naše novine 2026 - Evidencija. It contains these visible columns:
-  Email subject | Sender | Received date | Drive folder link | Status
-  Status starts as Received. You can edit the status later.
-- A hidden sixth column stores Gmail message IDs to prevent duplicate rows.
-  Keep this column and existing rows. Do not rename/reorder the headers.
-- The received date is Gmail's internal delivery timestamp, displayed in
-  the script's timezone (Europe/Vienna in the supplied manifest).
-- The original message, its attachments, and its read/unread status remain
-  in Gmail. This script only requests read-only access to Gmail.
-- Photos/images, .doc, .docx, .docm and PDF files are copied as original files.
-  Files with generic MIME types are also recognized by their extensions.
-  Other attachments are ignored; ZIP files are not unpacked. Messages with
-  no supported attachment do not create a folder or a register row.
-- Embedded image attachments are included by default, which can include
-  signature logos. Set INCLUDE_INLINE_IMAGES to false to omit those.
-  Images hosted on external websites are not downloaded. An email with
-  only inline images may not match Gmail's has:attachment search.
-- Sent mail, drafts, spam and trash are excluded. Archived incoming mail
-  is included. No unread filter is used, so reading an email does not
-  prevent processing. Self-sent messages carrying the SENT label are skipped.
-- New mail is processed from installation onward. To include older mail,
-  set START_FROM before the first setup, e.g. 2026-01-01T00:00:00+01:00.
-- EXTRA_GMAIL_QUERY can restrict intake to the editorial address or label,
-  for example to:redakcija@example.com or label:Articles. If you add/change
-  a matching label after a message is older than the one-day overlap window,
-  it will not be picked up by the normal incremental scan.
-- Leave MAIN_FOLDER_ID and SPREADSHEET_ID empty for automatic creation.
-  To use existing resources, set their IDs before setup. A Drive folder ID
-  is the text after /folders/ in its URL. A spreadsheet ID is the text
-  between /d/ and /edit in its URL. Use a My Drive destination for this
-  version; shared-drive deployments need the advanced Drive API.
-- Setup can be rerun without creating another timer or resetting the start
-  date. Configuration of resources and START_FROM is intended for initial
-  installation; changing those later does not automatically migrate data.
-- Partially completed saves are retried, using existing article folders and
-  numbered filenames. A Received row is written only after all supported
-  attachments have been saved. Avoid editing pending folders/filenames.
-- Gmail search is rechecked over a one-day overlap to accommodate delayed
-  indexing. Exceptionally longer indexing delays can require a manual backfill.
-- The script is intended for normal editorial submission volumes. Google's
-  Apps Script/Gmail/Drive quotas and available Drive storage still apply.
+NADGRADNJA
+V istem projektu Apps Script zamenjajte Code.gs in appsscript.json ter ponovno
+zaženite setup. Shranjeni ID-ji mape in evidence ostanejo v tem projektu.
 
-STOP / TROUBLESHOOT
-- Run stopAutomation to remove this script's checking timer.
-  Run setup again to resume. No emails, files or rows are deleted.
-- In Apps Script, open Executions to inspect failures. Failed submissions
-  are retried automatically; fix permissions, quota/storage or deleted
-  destination resources if retries keep failing. Other messages in the
-  same run can still be registered successfully.
-- If you see "Gmail is not defined", check that the supplied manifest was
-  saved. Alternatively add Gmail API under Editor > Services > +.
-- The same Google account should install and run the automation. The timer
-  runs as its creator, and uses that person's Gmail, Drive, and permissions.
-- Review/test this script in your own Google account before relying on it.
-  Local verification uses simulated services, not your live mailbox.
+OSNOVNO DELOVANJE
+- Glavna mapa: Naše novine 2026.
+- Evidenca: Naše novine 2026 - evidenca; glavni zavihek: Prejeti članki.
+- Nov članek zahteva priponko .doc ali .docx. Slike in PDF se lahko povežejo
+  z obstoječim člankom, ne morejo pa ustvariti novega članka.
+- Neujemajoče dopolnitve urednik poveže v zavihku Neujemajoči maili.
+- Tudi slike brez prepoznane povezave se shranijo začasno in dodajo v ta zavihek.
+- Stanje pripravljeno za lekturo pošlje izbrani dokument lektorju.
+- Privzeti lektor je uros.jures@gmail.com; naslov lahko nastavite pri članku.
+- Zadeva za lekturo vsebuje trajni ID članka in številko kroga.
+- Lektor ohrani zadevo in vrne dokument s pripono _lekturirano pred končnico.
+- Obstoječa e-pošta in njena prebranost ostaneta v Gmailu.
 
-GOOGLE REFERENCES
-https://developers.google.com/apps-script/guides/triggers/installable
-https://developers.google.com/apps-script/guides/services/advanced
-https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages
-https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages/list
+LOKALNI PREIZKUSI
+Z nameščenim Node.js 18 ali novejšim v korenu repozitorija zaženite:
+
+  npm test
+
+Namestitev dodatnih knjižnic ni potrebna. Preizkusi simulirajo Gmail, Drive,
+Google Sheets in pošiljanje pošte. Ne dostopajo do dejanskega Google računa.

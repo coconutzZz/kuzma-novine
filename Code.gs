@@ -16,7 +16,8 @@ const CONFIG = Object.freeze({
   // Prazno pomeni samodejno ustvarjanje; pri nadgradnji ostanejo shranjeni ID-ji.
   MAIN_FOLDER_ID: '',
   SPREADSHEET_ID: '',
-  // Primer: 'to:urednistvo@example.com'. Prazno: vsa prejeta pošta s priponkami.
+  // Primer: 'to:urednistvo@example.com'. Nov članek zahteva .doc ali .docx;
+  // druge podprte priponke obravnavamo samo kot možne dopolnitve.
   EXTRA_GMAIL_QUERY: '',
   // Nastavite pred prvo namestitvijo, če želite uvoziti tudi starejšo pošto.
   START_FROM: '',
@@ -155,9 +156,12 @@ function processSubmissions() {
     } while (pageToken);
     // Starejše sporočilo obravnavamo pred pozneje prispelimi fotografijami.
     messages.sort((a, b) => Number(a.internalDate) - Number(b.internalDate));
+    let accepted = 0;
     for (const message of messages) {
       requireTime_(deadline);
       try {
+        if (!shouldProcessMessage_(ctx, message)) continue;
+        accepted++;
         const mail = stageMessage_(ctx, message, deadline);
         routeMessage_(ctx, mail, deadline);
       } catch (error) {
@@ -169,7 +173,7 @@ function processSubmissions() {
     processReviewQueue_(ctx, deadline);
     if (failures) throw new Error(failures + ' opravil ni bilo dokončanih. Naslednji zagon jih bo poskusil ponoviti.');
     ctx.props.setProperty('NN_CHECKPOINT', String(before));
-    console.log('Obdelanih novih sporočil: ' + messages.length + '.');
+    console.log('Obravnavanih novih sporočil: ' + accepted + '.');
   } finally { lock.releaseLock(); }
 }
 
@@ -196,6 +200,31 @@ function onPendingEdit(event) {
       for (const row of rows) sendForReview_(ctx, row.id, deadline);
     }
   } finally { lock.releaseLock(); }
+}
+
+/** Samostojen nov članek sprejmemo samo v obliki .doc ali .docx. */
+function hasNewArticleDocument_(files) {
+  return files.some(file => file.kind === 'document' && /\.docx?$/i.test(file.name));
+}
+
+/** Slike sprejmemo tudi brez povezave; drugo gradivo mora kazati na dopolnitev. */
+function shouldProcessMessage_(ctx, message) {
+  const attachments = collectAttachments_(message.payload);
+  if (attachments.some(part => fileKind_(part.mimeType, part.filename) === 'image')) return true;
+  if (hasNewArticleDocument_(attachments.map(part => ({
+    kind: fileKind_(part.mimeType, part.filename), name: part.filename
+  })))) return true;
+  if (!attachments.length) return false;
+  const subject = decodeHeader_(header_(message.payload, 'Subject')) || '(brez zadeve)';
+  const sender = decodeHeader_(header_(message.payload, 'From'));
+  const email = emailAddress_(sender);
+  const body = bodyText_(message.payload).slice(0, 12000);
+  const articleId = subjectArticleId_(subject);
+  if (articleId && find_(ctx.articles, A_KEYS, articleId)) return true;
+  if (followupCue_(subject + '\n' + body)) return true;
+  return matchArticles_(ctx, { subject: subject, sender: sender, email: email,
+    thread: message.threadId, hint: titleHint_(subject, body), body: body,
+    org: organization_(ctx, email, subject + '\n' + body) }).length > 0;
 }
 
 /** Shrani izvirno e-pošto (.eml) in vse podprte priponke v začasno mapo. */
@@ -260,13 +289,15 @@ function routeMessage_(ctx, mail, deadline) {
   }
   const suggestions = matchArticles_(ctx, mail);
   const files = JSON.parse(mail.files);
-  const imagesOnly = files.some(f => f.kind === 'image') && !files.some(f => f.kind === 'document');
+  const canCreateArticle = hasNewArticleDocument_(files);
+  const hasImages = files.some(file => file.kind === 'image');
   const followup = followupCue_(mail.subject + '\n' + mail.body);
   const subjectId = subjectArticleId_(mail.subject);
-  if (suggestions.length || imagesOnly || followup || subjectId || mail.state === STATE.PENDING) {
+  if (!canCreateArticle || suggestions.length || followup || subjectId || mail.state === STATE.PENDING) {
     mail.state = STATE.PENDING;
     mail.reason = suggestions.length ? suggestions.map(s => s.reasons.join(', ')).join(' | ')
-      : imagesOnly ? 'Prejete so samo slike; članek mora izbrati urednik.'
+      : !canCreateArticle && hasImages ? 'Slik ni bilo mogoče povezati s člankom. Urednik naj izbere ustrezni članek.'
+      : !canCreateArticle ? 'Za nov članek je potrebna datoteka .doc ali .docx. Gradivo lahko povežete z obstoječim člankom.'
         : 'Besedilo nakazuje dopolnitev; članek mora izbrati urednik.';
     put_(ctx.log, L_KEYS, mail);
     const existing = find_(ctx.pending, P_KEYS, mail.id);
@@ -294,7 +325,12 @@ function confirmPending_(ctx, messageId, deadline) {
     if (mail.state !== STATE.PENDING) throw new Error('Gradivo še ni pripravljeno za povezavo.');
     if (!pending.selection) throw new Error('Najprej izberite članek v stolpcu »Izbrani članek«.');
     let target;
-    if (pending.selection === NEW_ARTICLE) target = 'NN-' + mail.id;
+    if (pending.selection === NEW_ARTICLE) {
+      if (!hasNewArticleDocument_(JSON.parse(mail.files))) {
+        throw new Error('Nov članek lahko ustvarite samo iz priponke .doc ali .docx. Izberite obstoječi članek za povezavo tega gradiva.');
+      }
+      target = 'NN-' + mail.id;
+    }
     else {
       const match = String(pending.selection).match(/\[(NN-[a-zA-Z0-9_-]+)\]$/);
       target = match && match[1];
@@ -411,6 +447,9 @@ function createArticle_(ctx, mail) {
   const id = 'NN-' + mail.id;
   const existing = find_(ctx.articles, A_KEYS, id);
   if (existing) return existing;
+  if (!hasNewArticleDocument_(JSON.parse(mail.files))) {
+    throw new Error('Za ustvarjanje novega članka je potrebna priponka .doc ali .docx.');
+  }
   const title = mail.hint || mail.subject;
   const name = cleanName_(title).slice(0, 180);
   const marker = 'ID članka: ' + id;

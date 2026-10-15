@@ -1,0 +1,12 @@
+{
+  "name": "nase-novine-2026",
+  "version": "0.3.0",
+  "private": true,
+  "description": "Prejem člankov, povezovanje dopolnitev in lektura za Naše novine 2026.",
+  "scripts": {
+    "test": "node tests/automation.test.cjs"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
