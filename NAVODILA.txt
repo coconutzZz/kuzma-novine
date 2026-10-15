@@ -1,0 +1,171 @@
+NAŠE NOVINE 2026 – PREJEM ČLANKOV, DOPOLNITVE IN LEKTURA
+
+Datoteka evidence: Naše novine 2026 - evidenca
+Glavni zavihek: Prejeti članki
+Čakalnica za ročno povezovanje: Neujemajoči maili
+Privzeti lektor: uros.jures@gmail.com
+
+NAMESTITEV
+1. Prijavite se z Gmail računom, na katerega prihajajo članki.
+2. Na https://script.google.com/ ustvarite nov projekt.
+3. Vsebino datoteke Code.gs v urejevalniku v celoti zamenjajte s priloženo.
+4. V nastavitvah projekta omogočite prikaz datoteke appsscript.json.
+   Njeno vsebino zamenjajte s priloženo in shranite obe datoteki.
+   Manifest omogoči napredno storitev Gmail in potrebna dovoljenja.
+   Če uporabljate lasten projekt Google Cloud, v njem omogočite tudi Gmail API.
+5. Po potrebi pred prvo namestitvijo prilagodite CONFIG na začetku kode.
+   Prazna MAIN_FOLDER_ID in SPREADSHEET_ID pomenita samodejno ustvarjanje.
+   START_FROM je lahko npr. 2026-01-01T00:00:00+01:00 za uvoz starejše pošte.
+6. Izberite funkcijo setup in jo zaženite. Potrdite Googlova dovoljenja za
+   branje pošte, Drive, preglednice, sprožilce in pošiljanje pošte lektorju.
+7. Povezavi do glavne mape in evidence sta v dnevniku izvajanja.
+   Namestita se preverjanje pošte vsakih pet minut in obdelava urednikovih
+   izbir v preglednici. Računalnik in brskalnik lahko nato zaprete.
+8. Pošljite poskusni članek in preverite mapo ter vrstico. Nato iz drugega
+   sporočila pošljite slike, potrdite povezavo in preizkusite še lekturo.
+   Nova pošta se zaradi časovnega zamika obravnava šele po približno minuti.
+
+NADGRADNJA PRVOTNE RAZLIČICE
+- Uporabite ISTI projekt Apps Script, v katerem deluje prvotna različica.
+- Zamenjajte celotno Code.gs in appsscript.json ter ponovno zaženite setup.
+- Skript ohrani shranjene povezave do glavne mape in evidence, začetni datum
+  ter že prejete članke. Zavihek Submissions preimenuje v Prejeti članki,
+  prevede prvotne glave, stanje Received spremeni v Prejeto in doda nova polja.
+- Obstoječi članki dobijo ID-je, zato se pri ponovnem preverjanju ne podvojijo.
+- Prejšnjih šestih stolpcev pred nadgradnjo ne razvrščajte ali preimenujte.
+  Za varnostno kopijo evidence lahko prej uporabite Googlovo možnost kopiranja.
+- Po nadgradnji ne pustite delovati še drugega projekta z istim nabiralnikom.
+
+KAKO SO UREJENE MAPE
+Naše novine 2026/
+  Naslov članka/
+    prvo-sporocilo_001_clanek.docx
+    drugo-sporocilo_001_fotografija.jpg
+    tretje-sporocilo_001_clanek.docx
+    odgovor-lektorja_001_..._lekturirano.docx
+    ..._izvirno-sporočilo.eml
+  _Začasna pošta/
+    posta_ID-še-nepovezanega-sporočila/
+
+Vsak članek ima eno mapo. Vsa potrjena poznejša gradiva gredo vanjo.
+Predpone datotek vsebujejo ID sporočila in zaporedno številko priponke;
+tako se prvotni in popravljeni dokumenti ne prepisujejo. Izvirna e-pošta
+se shrani tudi kot datoteka .eml, sporočilo in priponke pa ostanejo v Gmailu.
+Skript ne spreminja prebranosti, oznak ali arhiviranja obstoječe pošte.
+
+ENOLIČNI ID-JI
+- Vsak članek dobi trajen ID, npr. NN-18f7a2c4d8e90123. Viden je v stolpcu
+  ID članka. Temelji na enoličnem Gmail ID-ju prvega sporočila; ne spreminjajte ga.
+- Vsako sporočilo je posebej evidentirano s svojim Gmail ID-jem. Vsak krog
+  lekture ima še svoj ID. ID-ji preprečujejo podvojitve in omogočajo sledenje.
+- Samodejno poslana pošta lektorju vključuje ID članka in krog v zadevi:
+  [NN-18f7a2c4d8e90123][L1] Obletnica gasilskega društva
+- Avtorju lahko za prihodnje dopolnitve posredujete zadevo z oznako
+  [NN-18f7a2c4d8e90123]. Tudi če naslova ne ohrani, obstaja ročno povezovanje.
+- Skript sam ne pošilja potrdil o prejemu avtorjem. Samodejno pošiljanje je
+  namenjeno dokumentom, ki jih urednik izrecno označi za lekturo.
+
+NOV ČLANEK IN POZNEJŠE DOPOLNITVE
+- Prvo sporočilo z dokumentom, ki nima znakov povezave z obstoječim člankom,
+  ustvari novo mapo in vrstico s stanjem Prejeto.
+- Če najde možne povezave ali prejme samo slike, sporočilo in priponke najprej
+  shrani v začasno mapo ter doda vrstico v Neujemajoči maili.
+- Pri predlogih primerja e-naslov, zadevo, naslov članka, besede v telesu
+  sporočila, znano organizacijo in Gmailov pogovor. Predlog vsebuje razloge.
+- V Prejeti članki lahko urednik popravi Naslov članka in Organizacijo.
+  To izboljša prihodnje predloge; obstoječa mapa se pri tem ne preimenuje.
+- V Sodelavci lahko vpišete pare E-naslov / Organizacija. Organizacijo lahko
+  skript prepozna tudi, če se njeno znano ime pojavi v besedilu sporočila.
+- Predlogi so primerjava besedila in znanih podatkov. Skript ne razume pomena
+  kot človek, ne prebira besedila znotraj pripetih Word/PDF dokumentov in ne
+  uporablja zunanjega jezikovnega modela. Dvoumne povezave potrdi urednik.
+
+UREDNIŠKO POTRJEVANJE
+1. Odprite Neujemajoči maili in preglejte pošiljatelja, predogled ter predloge.
+2. V stolpcu Izbrani članek izberite pravi članek iz spustnega seznama.
+   Če gre za nov prispevek znanega avtorja, izberite [NOVO] Ustvari nov članek.
+3. Za običajne slike ali popravke pustite Vrsta gradiva = Dopolnitev.
+   Če ročno povezujete lektorjev odgovor z neustrezno zadevo ali imenom,
+   lahko izrecno izberete Lekturirana različica.
+4. Označite potrditveno polje Potrdi povezavo.
+5. Skript premakne priponke in shranjeno e-pošto v mapo članka, vpiše povezavo
+   v Dnevnik pošte ter posodobi števce, datum in obvestilo v glavni evidenci.
+   Vrstica se odstrani iz čakalnice šele po uspešnem zaključku.
+6. Prazna začasna mapa se nato premakne v koš. Datoteke so že v mapi članka.
+
+Če pride do napake, vrstica ostane in pokaže Napaka / navodilo. Že potrjen
+prenos se nadaljuje v isti cilj ob naslednjem preverjanju, tudi če je bil
+del datotek že premaknjen. Ne premikajte ali preimenujte nedokončanega gradiva.
+
+POŠILJANJE V LEKTURO
+1. V Prejeti članki preverite polje Lektor. Privzeto je uros.jures@gmail.com;
+   pri posameznem članku lahko vnesete drug e-naslov. Vpišite en naslov.
+2. V polju Dokument za lekturo izberite točno različico Word ali PDF dokumenta,
+   ki jo želite poslati. Privzeto se ponudi zadnji povezani dokument.
+   Če sporočilo vsebuje več dokumentov, obvezno preverite izbiro.
+3. V spustnem seznamu Stanje izberite pripravljeno za lekturo.
+4. Dokument se pošlje iz računa, ki je namestil skript. Naslov lektorja,
+   izbrani dokument, ID članka, krog in zadeva se shranijo v zavihek Lekture.
+   Stanje članka se spremeni v V lekturi.
+5. Lektor prejme slovenska navodila: odgovori z isto zadevo in pripne datoteko,
+   npr. NN-18f7a2c4d8e90123_L1_lekturirano.docx.
+6. Samodejna povezava vrnjenega dokumenta zahteva ujemanje ID-ja članka,
+   kroga lekture in e-naslova pričakovanega lektorja ter dokument s pripono
+   _lekturirano pred končnico .doc, .docx, .docm ali .pdf.
+7. Veljaven odgovor se shrani v isto mapo, prvotni dokument ostane, stanje
+   članka pa postane Lekturirano. Tudi odgovor je v Dnevniku pošte.
+8. Nejasen odgovor gre v Neujemajoči maili, kjer ga potrdi urednik.
+
+Pošiljanje se ne sproži pri sami namestitvi. Sproži ga urednikova izbira stanja
+pripravljeno za lekturo, ali naslednji časovni zagon, če je bila izbira začasno
+zadržana zaradi sočasne obdelave. Za isti dokument in istega lektorja, ki že
+čaka na odgovor, ponovna izbira ne pošlje dodatne kopije.
+
+NOVE RAZLIČICE MED LEKTURO
+- Če avtor med lekturo pošlje nov popravek in ga urednik poveže, se izbrani
+  dokument posodobi, stanje pa postane Potrebna nova lektura.
+- Poznejši odgovor lektorja za staro različico se shrani v isto mapo, vendar
+  novejši popravek zaradi tega ne dobi oznake Lekturirano.
+- Urednik lahko novi dokument pošlje v naslednji krog. Zadeva dobi [L2], [L3] ...
+- Vsa gradiva in predhodne različice ostanejo shranjene.
+
+NAPAKE PRI POŠILJANJU
+- Če manjka naslov ali dokument, se pojavi Napaka pri lekturi. Odpravite
+  vzrok in ponovno izberite pripravljeno za lekturo.
+- Če je bila povezava prekinjena med dejanskim pošiljanjem, ni vedno mogoče
+  ugotoviti, ali je pošta odšla. Skript zato pokaže Preverite pošiljanje in
+  iste pošte sam ne pošilja ponovno.
+- Po preverjanju pri lektorju oziroma v poslani pošti v zavihku Lekture
+  popravite Stanje pošiljanja na Poslano ali Ni bilo poslano. Nato ponovno
+  izberite pripravljeno za lekturo v glavni evidenci.
+
+OMEJITVE IN UPORABA
+- Obravnava se pošta s podprtimi priponkami. Odgovor brez priponke ne pomeni
+  vrnjene lekture. Fotografije, Word in PDF se shranijo brez pretvorbe.
+- ZIP priponk ne razširja. Slik z zunanjih spletnih naslovov ne prenaša.
+- Vključene so tudi vdelane slike, zato se lahko shranijo podpisi in logotipi.
+  Za izključitev nastavite INCLUDE_INLINE_IMAGES na false.
+- Osnutki, vsiljena pošta in koš se ne uvažajo. Običajna poslana pošta se ne
+  obravnava kot prejeti članek. Izjema je dogovorjen lektorski odgovor samemu
+  sebi, če je isti račun hkrati uredniški nabiralnik in lektor.
+- EXTRA_GMAIL_QUERY lahko omeji prejem, npr. na naslov uredništva. Omejitev
+  mora prepuščati tudi lektorjeve odgovore. Če uporabite oznako, jo mora dobiti
+  tudi lektorjeva pošta. Pošta, ki šele čez več dni dobi ustrezno oznako, se
+  lahko izmakne enodnevnemu prekrivanju iskanja.
+- Časovni pas je Europe/Vienna. Preglednica uporablja isti časovni pas.
+- Glave, vrstni red stolpcev in skrite ID-je ohranite. Stanje, Naslov članka,
+  Organizacijo, Lektorja in Dokument za lekturo urednik lahko spreminja.
+- Dostop do urejanja evidence dodelite urednikom, ki bodo potrjevali povezave
+  in pošiljanje v lekturo. Sprožilci delujejo z dovoljenji njihovega namestitelja.
+- Različica je namenjena običajnemu uredniškemu obsegu in mapam v Mojem disku.
+  Upoštevati je treba prostor v Drive ter Googlove omejitve časa in pošiljanja.
+- Napake preverite v dnevniku izvajanja projekta Apps Script. stopAutomation
+  ustavi oba sprožilca; setup ju ponovno vključi. E-pošte in člankov ne briše.
+- Skript je preverjen s simuliranimi Googlovimi storitvami. Namestitev in
+  preizkus v dejanskem Google računu mora uporabnik še opraviti.
+
+GOOGLOVA DOKUMENTACIJA
+https://developers.google.com/apps-script/guides/triggers/installable
+https://developers.google.com/apps-script/reference/mail/mail-app
+https://developers.google.com/apps-script/reference/spreadsheet/data-validation-builder
+https://developers.google.com/workspace/gmail/api/reference/rest/v1/users.messages

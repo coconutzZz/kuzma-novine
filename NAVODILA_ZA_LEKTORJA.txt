@@ -1,0 +1,16 @@
+NAŠE NOVINE 2026 – NAVODILA ZA VRAČANJE LEKTURE
+
+1. Odprite prejeto sporočilo uredništva in priloženi dokument.
+2. Dokument lektorirajte in ga shranite kot novo datoteko.
+3. Ime dokumenta naj ima pred končnico pripono _lekturirano.
+   Primer:
+   Prejeto: NN-18f7a2c4d8e90123_L1.docx
+   Vrnite:  NN-18f7a2c4d8e90123_L1_lekturirano.docx
+4. V e-poštnem programu izberite Odgovori. Zadeve ne spreminjajte.
+   ID članka in oznaka kroga, npr. [NN-18f7a2c4d8e90123][L1], morata ostati.
+   Samodejna predpona Re: ali Odg: je dovoljena.
+5. Lekturirani dokument pripnite odgovoru in ga pošljite z istega e-naslova,
+   na katerega ste prejeli prošnjo za lekturo.
+
+Samo besedilo »lektorirano« brez pripetega dokumenta ne zaključi lekture.
+Če prejmete nov krog, uporabite novi dokument in odgovorite na novo sporočilo.
